@@ -9,24 +9,17 @@ namespace Toli
     {
         private Button emptyButton;
         private Button[,] buttons;
+        private int rowCount;
+        private int columnCount;
 
         public MainWindow()
         {
             InitializeComponent();
-            InitializeGrid();
+            btnGenerál_Click();
             GenerateAndShuffleButtons();
         }
 
-        private void InitializeGrid()
-        {
-            ToliGrid.ColumnDefinitions.Clear();
-            ToliGrid.RowDefinitions.Clear();
-            for (int i = 0; i < 3; i++)
-            {
-                ToliGrid.RowDefinitions.Add(new RowDefinition());
-                ToliGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            }
-        }
+        
 
         private void GenerateAndShuffleButtons()
         {
@@ -36,18 +29,14 @@ namespace Toli
 
         private void GenerateButtons()
         {
-            buttons = new Button[3, 3];
+            buttons = new Button[rowCount, columnCount];
             int buttonNumber = 1;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < rowCount; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < columnCount; j++)
                 {
-                    Button button = new Button
-                    {
-                        Content = $"{buttonNumber++}",
-                        Margin = new Thickness(5)
-                    };
+                    Button button = new Button { Content = $"{buttonNumber++}", Margin = new Thickness(5) };
                     button.Click += Button_Click;
                     ToliGrid.Children.Add(button);
                     Grid.SetRow(button, i);
@@ -56,7 +45,7 @@ namespace Toli
                 }
             }
 
-            emptyButton = buttons[2, 2];
+            emptyButton = buttons[rowCount - 1, columnCount - 1];
             emptyButton.Content = "";
         }
 
@@ -67,7 +56,7 @@ namespace Toli
 
             do
             {
-                numbers = Enumerable.Range(1, 8).OrderBy(x => rand.Next()).ToArray();
+                numbers = Enumerable.Range(1, rowCount * columnCount - 1).OrderBy(x => rand.Next()).ToArray();
             } while (!IsSolvable(numbers));
 
             int index = 0;
@@ -99,11 +88,7 @@ namespace Toli
 
             if ((row == Grid.GetRow(emptyButton) && Math.Abs(col - Grid.GetColumn(emptyButton)) == 1) || (col == Grid.GetColumn(emptyButton) && Math.Abs(row - Grid.GetRow(emptyButton)) == 1))
             {
-                Grid.SetRow(clickedButton, Grid.GetRow(emptyButton));
-                Grid.SetColumn(clickedButton, Grid.GetColumn(emptyButton));
-                Grid.SetRow(emptyButton, row);
-                Grid.SetColumn(emptyButton, col);
-
+                SwapButtons(clickedButton, emptyButton);
                 if (IsGameSolved())
                 {
                     MessageBox.Show("Gratulálok, sikeresen megoldottad a TiliToli játékot!");
@@ -111,12 +96,41 @@ namespace Toli
             }
         }
 
+        private void SwapButtons(Button button1, Button button2)
+        {
+            int row1 = Grid.GetRow(button1);
+            int col1 = Grid.GetColumn(button1);
+            int row2 = Grid.GetRow(button2);
+            int col2 = Grid.GetColumn(button2);
+
+            Grid.SetRow(button1, row2);
+            Grid.SetColumn(button1, col2);
+            Grid.SetRow(button2, row1);
+            Grid.SetColumn(button2, col1);
+        }
+
         private void BtnUjraKezd_Click(object sender, RoutedEventArgs e)
         {
             ToliGrid.Children.Clear();
-            InitializeGrid();
+            btnGenerál_Click();
             GenerateAndShuffleButtons();
+        }
+
+        private void btnGenerál_Click()
+        {
+            int rowCount = int.Parse(txtRowCount.Text);
+            int columnCount = int.Parse(txtColumnCount.Text);
+
+            ToliGrid.ColumnDefinitions.Clear();
+            ToliGrid.RowDefinitions.Clear();
+            for (int i = 0; i < rowCount; i++)
+            {
+                ToliGrid.RowDefinitions.Add(new RowDefinition());
+            }
+            for (int j = 0; j < columnCount; j++)
+            {
+                ToliGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
         }
     }
 }
-

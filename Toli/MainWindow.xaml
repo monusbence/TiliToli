@@ -12,7 +12,14 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button x:Name="btnUjraKezd" Content="Újra kezd" Click="BtnUjraKezd_Click" Margin="10px"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10px">
+            <TextBlock Text="Sorok száma:" Margin="5px"/>
+            <TextBox x:Name="txtRowCount" Width="50px" Margin="5px"/>
+            <TextBlock Text="Oszlopok száma:" Margin="5px"/>
+            <TextBox x:Name="txtColumnCount" Width="50px" Margin="5px"/>
+            <Button x:Name="btnGenerál" Content="Generál" Margin="5px" Click="btnGenerál_Click"/>
+        </StackPanel>
+        <Button x:Name="btnUjraKezd" Content="Újra kezd" Click="BtnUjraKezd_Click" Margin="10px" Grid.Row="0" HorizontalAlignment="Right"/>
         <Grid x:Name="ToliGrid" Grid.Row="1" Margin="10px">
 
         </Grid>
